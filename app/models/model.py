@@ -18,4 +18,3 @@ class DataBaseConnection(Base):
     db_username = Column(String)
     db_password = Column(String)
     db_description = Column(String)
-

@@ -13,7 +13,6 @@ app = FastAPI()
 def homePage():
     return {"message": "Good Morning...!"}
 
-
 @app.post("/addConnection")
 def add_data(req: DataBaseSchema, db: Session = Depends(get_db)): 
     data = DataBaseConnection(uid=str(uuid.uuid4()), db_name=req.db_name, db_type=req.db_type, 

@@ -1,0 +1,21 @@
+[tool.poetry]
+name = "crud-data-app"
+version = "0.1.0"
+description = "A CRUD application using fastapi"
+authors = ["naveenhiremath28 <naveenhiremath28@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+fastapi = "^0.115.6"
+uvicorn = "^0.34.0"
+sqlalchemy = "^2.0.36"
+pydantic = "^2.10.4"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.scripts]
+crud-data-app = "crud-data-app.main:app"
