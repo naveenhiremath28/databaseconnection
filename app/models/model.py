@@ -1,10 +1,6 @@
-from sqlalchemy import create_engine, Column, Integer, String
-from sqlalchemy.orm import declarative_base
-
-url = "sqlite:///./DataBaseConnections.db"
-engine = create_engine(url) 
-Base = declarative_base()
-Base.metadata.create_all(bind=engine)
+from sqlalchemy import  Column, Integer, String
+from db_connection.database import Base
+from db_connection.database import engine
 
 class DataBaseConnection(Base):
     __tablename__ = "database_connections"
@@ -18,3 +14,5 @@ class DataBaseConnection(Base):
     db_username = Column(String)
     db_password = Column(String)
     db_description = Column(String)
+
+Base.metadata.create_all(bind=engine)
