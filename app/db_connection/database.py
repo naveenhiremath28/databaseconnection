@@ -5,7 +5,6 @@ DATABASE_URL = "sqlite:///./database_connection.db"
 engine = create_engine(DATABASE_URL) 
 Base = declarative_base()
 
-
 session = sessionmaker(autocommit=False, autoflush=True, bind=engine)
 
 def get_db():

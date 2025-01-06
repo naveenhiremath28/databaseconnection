@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 from pydantic import ValidationError
 from db_connection.database import get_db
@@ -6,16 +6,26 @@ from schemas.schema import DataBaseSchema, ResponseSchema, format_response, gene
 from models.model import DataBaseConnection
 from exceptions.app_exceptions import APIResponseException
 import uuid
-from datetime import datetime
 
 router = APIRouter()
 
-@router.get("/")
-def homePage() -> ResponseSchema:
+@router.get("/", summary="Root Page", response_description="Successfully retrieved the root page")
+def root() -> ResponseSchema:
     return format_response("SUCCESS","The API is LIVE..!!!")
 
-@router.post("/add-connection")
-def add_connection(req: DataBaseSchema, db: Session = Depends(get_db)) -> ResponseSchema: 
+@router.post("/add-connection", summary="Add New Connection", response_description="Successfully added new connection")
+def add_connection(req: DataBaseSchema, db: Session = Depends(get_db)) -> ResponseSchema:
+    """
+    Add a new database connection configuration with the following details:
+
+    - **db_name**: The name of the database must be specified.
+    - **db_type**: Specify the type of database (e.g., MySQL, PostgreSQL, MongoDB, etc.).
+    - **db_port**: Provide the port number required for the specified database.
+    - **db_host**: Specify the host address where the database is located.
+    - **db_username**: The database username must be specified.
+    - **db_password**: Specify the password associated with the database user.
+    - **db_description**: Include a short note about the database.
+    """
     try:
         new_entry = DataBaseConnection(
             uid=str(uuid.uuid4()),
@@ -35,7 +45,7 @@ def add_connection(req: DataBaseSchema, db: Session = Depends(get_db)) -> Respon
     except Exception as e:
         raise APIResponseException(500,f"Error while adding connection: {str(e)}")
 
-@router.get("/read-all")
+@router.get("/read-all",summary="Read All Records", response_description="Successfully retrieved all data")
 def read_all(db: Session = Depends(get_db)) -> ResponseSchema:
     try:
         database_record = db.query(DataBaseConnection).all()
@@ -47,8 +57,11 @@ def read_all(db: Session = Depends(get_db)) -> ResponseSchema:
     except ValidationError as e:
         raise APIResponseException(500,f"Error while reading records: {str(e)}")
 
-@router.get("/read/{id}")
+@router.get("/read/{id}", summary="Read Record by ID", response_description="Successfully retrieved the record with the specified ID")
 def read_by_id(id: int, db: Session = Depends(get_db)) -> ResponseSchema:
+    """
+    Specify a valid **ID** to retrieve the data.
+    """
     try:
         database_record = db.query(DataBaseConnection).filter(DataBaseConnection.id == id).first()
         if database_record:
@@ -59,7 +72,7 @@ def read_by_id(id: int, db: Session = Depends(get_db)) -> ResponseSchema:
     except ValidationError as e:
         raise APIResponseException(500,f"Error while reading record: {str(e)}")
     
-@router.delete("/delete-all/")
+@router.delete("/delete-all/", summary="Delete All Records", response_description="Successfully deleted all data")
 def delete_all(db:Session = Depends(get_db)):
     try:
         database_records = db.query(DataBaseConnection).all()
@@ -73,8 +86,11 @@ def delete_all(db:Session = Depends(get_db)):
     except ValidationError as e:
         raise APIResponseException(500,f"Error while reading record: {str(e)}")
                        
-@router.delete("/delete/{id}")
+@router.delete("/delete/{id}", summary="Delete Record by ID", response_description="Successfully deleted the record with the specified ID")
 def delete_by_id(id: int, db: Session = Depends(get_db)) -> ResponseSchema:
+    """
+    Specify valid **ID** to delete the data.
+    """
     try:
         database_record = db.query(DataBaseConnection).filter(DataBaseConnection.id == id).first()
         if database_record:
@@ -86,8 +102,11 @@ def delete_by_id(id: int, db: Session = Depends(get_db)) -> ResponseSchema:
     except ValidationError as e:
         raise APIResponseException(500,f"Error while deleting record: {str(e)}")
 
-@router.put("/update/{id}")
+@router.put("/update/{id}", summary="Update Record by ID", response_description="Successfully updated the record with the specified ID")
 def update_by_id(id: int, fields_to_update: DataBaseSchema, db: Session = Depends(get_db)) -> ResponseSchema:
+    """
+    Make the necessary updates for the specified **ID**.
+    """
     try:
         database_record = db.query(DataBaseConnection).filter(DataBaseConnection.id == id).first()
         if database_record:
