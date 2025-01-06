@@ -6,7 +6,7 @@ from fastapi.testclient import TestClient
 from app.db_connection.database import Base, get_db
 import uuid
 
-DATABASE_URL = "sqlite:///./test_conection.db"
+DATABASE_URL = "sqlite:///./test_connection.db"
 
 engine =  create_engine(DATABASE_URL) 
 
