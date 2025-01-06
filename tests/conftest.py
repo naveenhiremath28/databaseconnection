@@ -41,7 +41,6 @@ def test_client(db_session):
 def generate_uuid():
     return str(uuid.uuid4())
 
-
 @pytest.fixture()
 def db_payload(generate_uuid):
     return {
