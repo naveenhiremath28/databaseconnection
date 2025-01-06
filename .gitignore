@@ -13,4 +13,4 @@ v/
 Connections.db
 database_connection.db
 DataBaseConnections.db
-test_connection.db
+**/test_connection.db
