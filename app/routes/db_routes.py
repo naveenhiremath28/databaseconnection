@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from pydantic import ValidationError
 from db_connection.database import get_db
-from schemas.schema import DataBaseSchema, ResponseSchema, format_response
+from schemas.schema import DataBaseSchema, ResponseSchema, format_response, generate_schema_object
 from models.model import DataBaseConnection
 from exceptions.app_exceptions import APIResponseException
 import uuid
@@ -30,7 +30,7 @@ def add_connection(req: DataBaseSchema, db: Session = Depends(get_db)) -> Respon
         db.add(new_entry)
         db.commit()
         db.refresh(new_entry)
-        data = DataBaseSchema.from_orm(new_entry)
+        data = generate_schema_object(new_entry)
         return format_response("SUCCESS", data)
     except Exception as e:
         raise APIResponseException(500,f"Error while adding connection: {str(e)}")
@@ -40,7 +40,7 @@ def read_all(db: Session = Depends(get_db)) -> ResponseSchema:
     try:
         database_record = db.query(DataBaseConnection).all()
         if database_record:
-            data_list = [DataBaseSchema.from_orm(info) for info in database_record]
+            data_list = [generate_schema_object(info) for info in database_record]
             return format_response("SUCCESS",data_list)
         else:
             raise APIResponseException(404,"No database connection found")
@@ -52,13 +52,27 @@ def read_by_id(id: int, db: Session = Depends(get_db)) -> ResponseSchema:
     try:
         database_record = db.query(DataBaseConnection).filter(DataBaseConnection.id == id).first()
         if database_record:
-            data = DataBaseSchema.from_orm(database_record)
+            data = generate_schema_object(database_record)
             return format_response("SUCCESS", data)
         else:
             raise APIResponseException(404,"No database connection found")
     except ValidationError as e:
         raise APIResponseException(500,f"Error while reading record: {str(e)}")
-
+    
+@router.delete("/delete-all/")
+def delete_all(db:Session = Depends(get_db)):
+    try:
+        database_records = db.query(DataBaseConnection).all()
+        if database_records:
+            for data in database_records:
+                db.delete(data)
+                db.commit()
+            return format_response("SUCCESS","All records deleted successfully")
+        else:
+            raise APIResponseException(404, "Not database connection found")
+    except ValidationError as e:
+        raise APIResponseException(500,f"Error while reading record: {str(e)}")
+                       
 @router.delete("/delete/{id}")
 def delete_by_id(id: int, db: Session = Depends(get_db)) -> ResponseSchema:
     try:
@@ -86,7 +100,7 @@ def update_by_id(id: int, fields_to_update: DataBaseSchema, db: Session = Depend
             database_record.db_description = fields_to_update.db_description
             db.commit()
             db.refresh(database_record)
-            data = DataBaseSchema.from_orm(database_record)
+            data = generate_schema_object(database_record)
             return format_response("SUCCESS", data)
         else:
             raise APIResponseException(status_code=404, detail="Database connection not found")

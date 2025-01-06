@@ -6,16 +6,15 @@ from fastapi.testclient import TestClient
 from app.db_connection.database import Base, get_db
 import uuid
 
-DATABASE_URL =  "sqlite:///./test_db.db"
-# DATABASE_URL = "sqlite:///./test_conection.db"
+DATABASE_URL = "sqlite:///./test_conection.db"
 
-engine =  create_engine(DATABASE_URL) #static pool
+engine =  create_engine(DATABASE_URL) 
 
 TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 Base.metadata.create_all(bind=engine)
 
-@pytest.fixture(scope="function")
+@pytest.fixture()
 def db_session():
     connection = engine.connect()
     transaction = connection.begin()
@@ -25,7 +24,7 @@ def db_session():
     transaction.rollback()
     connection.close()
 
-@pytest.fixture(scope="function")
+@pytest.fixture()
 def test_client(db_session):
 
     def override_get_db():

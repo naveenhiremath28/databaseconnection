@@ -25,6 +25,7 @@ def test_get_by_id(test_client, db_payload):
     assert response_json["message"]["db_port"] == 3306
 
 def test_update_by_id(test_client, db_payload):
+    response = test_client.post("/add-connection", json=db_payload)
     response = test_client.get("/read/1")
     assert response.status_code == 200
     response_json = response.json()
@@ -39,15 +40,20 @@ def test_update_by_id(test_client, db_payload):
     assert response_json["message"]["db_port"] == 3306
     assert response_json["message"]["db_name"] == "test_database_2"
 
-
 def test_delete_by_id(test_client, db_payload):
     response = test_client.delete("/delete/1")
     response_json = response.json()
     assert response.status_code == 200
 
 
+def test_delete_all(test_client):
+    response = test_client.delete("/delete-all")
+    response_json = response.json()
+    assert response.status_code == 200
+    assert response_json["status"] == "SUCCESS"
+
 def test_get_db_not_found(test_client):
-    response = test_client.get("/read/10")
+    response = test_client.get("/read/1")
     assert response.status_code == 404
     response_json = response.json()
     assert response_json["detail"] == "No database connection found"
