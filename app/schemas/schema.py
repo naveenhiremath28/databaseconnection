@@ -22,7 +22,7 @@ class ResponseSchema(BaseModel):
 def format_response(status: str, message: Any) -> ResponseSchema:
     return ResponseSchema(status=status, message=message)
 
-def generate_schema_object(data: DataBaseConnection):
+def generate_schema_object(data: DataBaseConnection) -> DataBaseSchema:
     return DataBaseSchema(
         id=data.id,
         uid=data.uid,
