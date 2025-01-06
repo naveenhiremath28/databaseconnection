@@ -1,22 +1,16 @@
 __pycache__/
 
-# Distribution files
 dist/
 
-# Lock file (if not needed for version control)
 poetry.lock
 
-# Ignore all __init__.py files
 **/__init__.py
 
-# Cache directory tag
 CACHEDIR.TAG
 
-# Version control-related directories
 v/
 
-# Specific database files
-connections.db
+Connections.db
 database_connection.db
 DataBaseConnections.db
 test_db.db
