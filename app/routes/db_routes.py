@@ -1,4 +1,4 @@
-from fastapi import Depends, HTTPException, FastAPI, APIRouter, status
+from fastapi import Depends, HTTPException, APIRouter, status
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 from pydantic import ValidationError
@@ -6,17 +6,16 @@ from app.db_connection.database import get_db
 from app.schemas.schema import ResponseSchema, format_response, generate_schema_object
 from app.utils.entities import  DataBaseSchema, DataBaseConnection
 from app.exceptions.app_exceptions import APIResponseException
-# from app.routes import router as db_router
 from app.jwt_handler.auth import *
 from app.jwt_handler import auth
 from typing import Annotated
-
 
 db_router = APIRouter()
 
 @db_router.get("/", summary="Root Page", response_description="Successfully retrieved the root page")
 def root() -> ResponseSchema:
     return format_response("SUCCESS","The API is LIVE..!!!")
+
 
 @db_router.post("/token")
 async def login_for_access_token(
@@ -67,6 +66,7 @@ def add_connection(req: DataBaseSchema, db: Session = Depends(get_db)) -> Respon
         return format_response("SUCCESS", data)
     except ValidationError as e:
         raise APIResponseException(500,f"Error while adding connection: {str(e)}")
+    
 
 @db_router.get("/connection/read-all",summary="Read All Records", response_description="Successfully retrieved all data")
 def read_all(db: Session = Depends(get_db)) -> ResponseSchema:
@@ -79,6 +79,7 @@ def read_all(db: Session = Depends(get_db)) -> ResponseSchema:
             raise APIResponseException(404,"No database connection found")
     except ValidationError as e:
         raise APIResponseException(500,f"Error while reading records: {str(e)}")
+    
 
 @db_router.get("/connection/read/{id}", summary="Read Record by ID", response_description="Successfully retrieved the record with the specified ID")
 def read_by_id(id: str, db: Session = Depends(get_db)) -> ResponseSchema:
@@ -95,6 +96,7 @@ def read_by_id(id: str, db: Session = Depends(get_db)) -> ResponseSchema:
     except ValidationError as e:
         raise HTTPException(500,f"Error while reading record: {str(e)}")
     
+    
 @db_router.delete("/connection/delete-all/", summary="Delete All Records", response_description="Successfully deleted all data")
 def delete_all(db:Session = Depends(get_db)):
     try:
@@ -107,6 +109,7 @@ def delete_all(db:Session = Depends(get_db)):
             raise APIResponseException(404, "No database connection found")
     except ValidationError as e:
         raise APIResponseException(500,f"Error while reading record: {str(e)}")
+    
                        
 @db_router.delete("/connection/delete/{id}", summary="Delete Record by ID", response_description="Successfully deleted the record with the specified ID")
 def delete_by_id(id: str, db: Session = Depends(get_db)) -> ResponseSchema:
@@ -123,6 +126,7 @@ def delete_by_id(id: str, db: Session = Depends(get_db)) -> ResponseSchema:
             raise APIResponseException(404,"No database connection found")
     except ValidationError as e:
         raise APIResponseException(500,f"Error while deleting record: {str(e)}")
+    
 
 @db_router.put("/connection/update/{id}", summary="Update Record by ID", response_description="Successfully updated the record with the specified ID")
 def update_by_id(id: str, fields_to_update: DataBaseSchema, db: Session = Depends(get_db)) -> ResponseSchema:

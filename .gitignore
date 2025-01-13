@@ -10,6 +10,8 @@ CACHEDIR.TAG
 
 v/
 
+htmcov/
+
 .coverage
 Connections.db
 app/database_connection.db
