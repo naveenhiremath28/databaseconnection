@@ -10,7 +10,8 @@ CACHEDIR.TAG
 
 v/
 
+.coverage
 Connections.db
+app/database_connection.db
 database_connection.db
-DataBaseConnections.db
-test_connection.db
+py-scripts.sh

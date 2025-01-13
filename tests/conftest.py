@@ -2,29 +2,33 @@ from app.main import app
 import pytest
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
+from sqlalchemy.pool import StaticPool
 from fastapi.testclient import TestClient
 from app.db_connection.database import Base, get_db
 import uuid
 
-DATABASE_URL = "sqlite:///./test_connection.db"
+DATABASE_URL = "sqlite:///./test_connections.db"
 
-engine =  create_engine(DATABASE_URL) 
+engine =  create_engine(
+    DATABASE_URL,
+     connect_args={"check_same_thread": False},
+    poolclass=StaticPool) 
 
 TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 Base.metadata.create_all(bind=engine)
 
-@pytest.fixture()
+@pytest.fixture(scope="function")
 def db_session():
     connection = engine.connect()
     transaction = connection.begin()
-    session = TestingSessionLocal(bind=engine)
+    session = TestingSessionLocal(bind=connection)
     yield session
     session.close()
     transaction.rollback()
     connection.close()
 
-@pytest.fixture()
+@pytest.fixture(scope="function")
 def test_client(db_session):
 
     def override_get_db():
@@ -40,12 +44,11 @@ def test_client(db_session):
 @pytest.fixture()
 def generate_uuid():
     return str(uuid.uuid4())
-
+    
 @pytest.fixture()
 def db_payload(generate_uuid):
     return {
-        "id": 1,
-        "uid": generate_uuid,
+        "id": generate_uuid,
         "db_name": "test_database",
         "db_type": "connection",
         "db_host": "localhost",

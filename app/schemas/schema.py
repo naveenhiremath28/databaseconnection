@@ -1,18 +1,7 @@
 from pydantic import BaseModel
 from datetime import datetime
 from typing import Any
-from models.model import DataBaseConnection
-
-class DataBaseSchema(BaseModel):
-    id: int
-    uid: str
-    db_name: str
-    db_type: str
-    db_host: str
-    db_port: int
-    db_username: str
-    db_password: str
-    db_description: str
+from app.utils.entities import DataBaseConnection, DataBaseSchema
 
 class ResponseSchema(BaseModel):
     timestamp:datetime = datetime.now()
@@ -25,7 +14,6 @@ def format_response(status: str, message: Any) -> ResponseSchema:
 def generate_schema_object(data: DataBaseConnection) -> DataBaseSchema:
     return DataBaseSchema(
         id=data.id,
-        uid=data.uid,
         db_name=data.db_name,
         db_type=data.db_type,
         db_host=data.db_host,
@@ -34,3 +22,10 @@ def generate_schema_object(data: DataBaseConnection) -> DataBaseSchema:
         db_password=data.db_password,
         db_description=data.db_description
     )
+
+class Token(BaseModel):
+    acess_token: str
+    token_type: str
+
+class TokenData(BaseModel):
+    username: str | None = None
