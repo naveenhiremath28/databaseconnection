@@ -97,7 +97,7 @@ def read_by_id(id: str, db: Session = Depends(get_db)) -> ResponseSchema:
         raise HTTPException(500,f"Error while reading record: {str(e)}")
     
     
-@db_router.delete("/connection/delete-all/", summary="Delete All Records", response_description="Successfully deleted all data")
+@db_router.delete("/connection/delete-all", summary="Delete All Records", response_description="Successfully deleted all data")
 def delete_all(db:Session = Depends(get_db)):
     try:
         database_records = db.query(DataBaseConnection).all()
