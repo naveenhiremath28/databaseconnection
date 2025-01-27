@@ -57,3 +57,10 @@ def db_payload(generate_uuid):
         "db_password": "root@123",
         "db_description": "This is test_database"
     }
+
+@pytest.fixture(scope="function")
+def get_credentials():
+    return {
+        "username": "naveen",
+        "password": "naveen@123"
+    }
