@@ -17,3 +17,4 @@ Connections.db
 app/database_connection.db
 database_connection.db
 py-scripts.sh
+pyproject.toml

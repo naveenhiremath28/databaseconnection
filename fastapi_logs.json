@@ -1,0 +1,18 @@
+[
+  {
+    "time": "2025-01-27 16:51:10,629",
+    "id": "6c700d93-4c9f-47e6-bbfc-0286ee25dd7a",
+    "process_name": "app.logs.app_logger_formatter",
+    "level": "INFO",
+    "pathname": "/home/sanketikac340/Desktop/crud-data-app/app/main.py",
+    "message": "Server is ALIVE !!!"
+  },
+  {
+    "time": "2025-01-27 16:51:52,653",
+    "id": "2aeab2d0-c04d-4376-9c1e-336c354b89b6",
+    "process_name": "app.logs.app_logger_formatter",
+    "level": "INFO",
+    "pathname": "/home/sanketikac340/Desktop/crud-data-app/app/main.py",
+    "message": "Server is ALIVE !!!"
+  }
+]
