@@ -1,3 +1,5 @@
+import json
+
 def test_root(test_client):
     response = test_client.get("/")
     assert response.status_code == 200
@@ -5,7 +7,9 @@ def test_root(test_client):
     assert response_json["status"] == "SUCCESS"
 
 def test_get_token(test_client, get_credentials):
-    response = test_client.post("/token", data=get_credentials)
+    response = test_client.get("/connection/read-all")
+    assert response.status_code == 401
+    response = test_client.post("/token/1", data=get_credentials)
     assert response.status_code == 200
 
 def test_create_db(test_client, db_payload):
@@ -88,7 +92,20 @@ def test_handle_500_error(test_client,db_payload):
     response = test_client.put(f"/connection/update/{db_payload['id']}", json=db_payload)
     assert response.status_code == 500
 
-    
+def test_invalid_credentials(test_client, get_invalid_username, get_credentials, get_invalid_password):
+    response = test_client.post("/token/1", data=get_invalid_username)
+    assert response.status_code == 401
+    response = test_client.post("/token/1", data=get_invalid_password)
+    assert response.status_code == 401
+    response = test_client.post("/token/0", data=get_credentials)
+    assert response.status_code == 200
+    response = test_client.get("/connection/read-all")
+    assert response.status_code == 401
+    response_msg = response.json()
+    assert response_msg["detail"] == "Time Limit Exceeded"
 
-
-    
+def test_file(get_file, get_cursor):
+    with open(get_file, "a+") as file:
+        file.seek(get_cursor)
+        file.truncate()
+        file.write('\n]')

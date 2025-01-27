@@ -3,20 +3,30 @@ import pytest
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import StaticPool
+from fastapi import Depends
 from fastapi.testclient import TestClient
 from app.db_connection.database import Base, get_db
 import uuid
+from app.logs.app_logger import FILE_NAME
+import json
+import os
 
 DATABASE_URL = "sqlite:///./test_connections.db"
 
-engine =  create_engine(
-    DATABASE_URL,
-     connect_args={"check_same_thread": False},
-    poolclass=StaticPool) 
+engine =  create_engine(DATABASE_URL) 
 
 TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 Base.metadata.create_all(bind=engine)
+
+
+if os.path.exists(FILE_NAME):
+    with open(FILE_NAME, "a+") as file:
+        file.seek(0)
+        logs = file.readlines()
+        global CURRENT_CURSOR
+        CURRENT_CURSOR = file.tell()-2
+
 
 @pytest.fixture(scope="function")
 def db_session():
@@ -64,3 +74,25 @@ def get_credentials():
         "username": "naveen",
         "password": "naveen@123"
     }
+
+@pytest.fixture(scope="function")
+def get_invalid_username():
+    return {
+        "username": "user",
+        "password": "naveen@123"
+    }
+
+@pytest.fixture(scope="function")
+def get_invalid_password():
+    return {
+        "username": "naveen",
+        "password": "user@123"
+    }
+
+@pytest.fixture(scope="function")
+def get_file():
+    return FILE_NAME
+
+@pytest.fixture(scope="function")
+def get_cursor():
+    return CURRENT_CURSOR
